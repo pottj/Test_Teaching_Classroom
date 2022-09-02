@@ -1,0 +1,135 @@
+---
+title: "R-Blatt 1: Grundlagen von R"
+subtitle: "Statistische Aspekte der Analyse molekularbiologischer und genetischer Daten"
+author: "Janne Pott"
+date: "WS 2022/23"
+output: pdf_document
+---
+
+```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
+r_on_server = FALSE
+if(r_on_server==T) basicpath = "/net/ifs2/san_projekte/projekte/genstat/"  else basicpath =  "C:/Users/janne/Documents/R/Test/Teaching_WS2122/"
+if(r_on_server==T) .libPaths("/net/ifs2/san_projekte/projekte/genstat/07_programme/rpackages/amanMRO/") 
+#.libPaths()
+if(r_on_server==T) pathwd = paste0(basicpath, "/13_lehre/WS2122_Statistik/uebung/Theorie/") else pathwd = paste0(basicpath,"Exercises_R/")
+setwd(pathwd)
+# Hier sollen alle notwendigen Pakete stehen die im Laufe der Uebung genutzt werden
+library(knitr)
+library(foreach)
+library(doParallel)
+library(data.table)
+library(readxl)
+library(lubridate)
+library(MASS)
+library(nlme)
+library(ggplot2)
+library(meta)
+library(qqman)
+library(ivpack)
+library(MendelianRandomization)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+In dieser Übung wird in die Statistik-Software [R](https://www.r-project.org/) eingeführt. R ist eine frei verfügbare Software, die unter Windows, MacOS X und Linux zur Verfügung steht. Zusammen mit der einfachen grafischen Oberfläche [RStudio](www.rstudio.com) können damit auch Einsteiger recht komfortabel grafische Darstellungen und statistische Auswertungen von Daten erstellen. Insbesondere bei der Verarbeitung von Genom-Daten ist es eines der Standardwerkzeuge. Informationen dazu findet man bei [Bioconductor](https://www.bioconductor.org/).
+
+In dieser ersten Übung sollen Sie zunächst einige Grundfunktionen von R kennenlernen bzw. wiederholen. Im Anschluss zu jedem Kapitel gibt ein paar Aufgaben, die Sie bitte lösen sollen. 
+
+Erstellen Sie abschließend ein PDF- oder HTML-Output, indem Sie das Skript knittern. 
+
+Hinweise zur Syntax von RMarkdown finden Sie [hier](https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) bzw. [hier](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf). 
+
+
+Grundsätzlich ist es sinnvoll, zunächst das Arbeitsverzeichnis festzulegen (Speicherort des Skripts) und anzugeben wo relevante **R-Pakete** liegen (ggf. abh. von R Version oder Schreibrechten!), zum Beispiel:
+
+```{r setup2, eval=F}
+getwd()
+.libPaths()
+# bitte ggf. anpassen, sollte sowas sein wie
+# setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
+# .libPaths("C:/Program Files/R/R-4.1.1/library")
+# Dies sind die Pakete, die im Laufe des Semesters benötigt werden. Bitte alle jetzt schon installieren. 
+library(knitr)
+library(foreach)
+library(doParallel)
+library(data.table)
+library(readxl)
+library(lubridate)
+library(MASS)
+library(nlme)
+library(ggplot2)
+library(meta)
+library(qqman)
+library(ivpack)
+library(MendelianRandomization)
+knitr::opts_chunk$set(echo = TRUE)
+```
+\newpage 
+
+# R als Taschenrechner
+## Beispiele
+
+Die folgenden Beispiele illustrieren, wie R als Taschenrechner genutzt werden kann: Sie geben einfach den Ausdruck ein, der ausgewertet werden soll und drücken die Eingabetaste.
+
+```{r B1A1_1}
+27+34
+113*6-98
+2^6
+2**6
+67/9
+(37.4+56)/5
+5/0
+```
+
+R gibt beim Dividieren durch 0 also keine Fehlermeldung aus sondern den Wert *Inf* für unendlich (engl.: infinite). Das entspricht nicht der üblichen mathematischen Konvention, ist aber auch nicht ganz sinnlos.
+
+In R stehen viele Ihnen schon aus der Schule bekannte Funktionen zur Verfügung wie **sin**, **cos**, **tan**, **exp** (e-Funktion), **log** (natürlicher Logarithmus), **sqrt** (Quadtatwurzel) oder **factorial** (Fakultät) usw. Hier sind Beispiele:
+
+```{r B1A1_2}
+pi
+sin(90)
+sin(pi/2)
+factorial(5)
+exp(0)
+log(exp(1))
+log(-1)
+log10(10)
+abs(-7)
+```
+
+In R werden die Winkel nicht in Grad, sondern in Bogenlänge eines Kreises mit Radius 1 gemessen. Da 360 Grad einem vollem Kreisumfang 2$\pi$ entspricht, muss statt 90 Grad die Bogenlänge $\pi$/2 verwendet werden. 
+
+Da der Logarithmus nur für positive Argumente definiert ist, gibt R hier ein *NaN* (not a number) aus.
+
+Zum Abschluss verschaffen wir uns noch einen ersten kleinen Eindruck von den graphischen Fähigkeiten von R.
+
+```{r B1A1_3}
+curve(sin,-pi,pi)
+curve(cos,add=TRUE,col="red")
+```
+
+Im Graphikfenster erkennen Sie die Sinuskurve von $\pi$ bis $\pi$. Die Koordinatenachsen sind am Bildrand gezeichnet. Ohne den Zusatz *add=TRUE* bei der Cosinus-Funktion wäre ein ganz neues Bild gezeichnet worden. 
+
+## Aufgaben
+
+Berechnen Sie folgende Terme: 
+
+a) $|3^5 - 2^{10}|$
+
+b) $sin(\frac34 \pi)$
+
+c) $\frac{16!}{5!11!}$
+
+d) $\sqrt{37-8} + \sqrt{11}$
+
+e) $e^{-2.7}/0.1$
+
+f) $2.3^8 + \ln(7.4) - \tan(0.3\pi)$
+
+g) $\log_{10}(27)$
+
+h) $\ln(\pi)$
+
+i) $\ln(-1)$
+
+\newpage 
